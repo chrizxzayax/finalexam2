@@ -127,9 +127,36 @@ int main() {
     for (int i = 0; i < 3; ++i) {
         coffeeQueue.push_back(make_customer_for_vendor(rng, COFFEE_ORDERS));
     }
-        std::cout << "  Queue now: [";
+
+    const int ROUNDS = 10;
+
+    std::cout << "Starting simulation for " << ROUNDS << " rounds.\n\n";
+
+    for (int round = 1; round <= ROUNDS; ++round) {
+        std::cout << "===== Round " << round << " =====\n";
+
+        // --- Coffee booth actions ---
+        std::cout << "Coffee Booth:\n";
+        if (!coffeeQueue.empty()) {
+            Customer served = coffeeQueue.pop_front();
+            std::cout << "  Served: " << served.name << " (" << served.order << ")\n";
+        } else {
+            std::cout << "  Served: (none, queue empty)\n";
+        }
+        if (coin_flip(rng)) {
+            Customer newcomer = make_customer_for_vendor(rng, COFFEE_ORDERS);
+            coffeeQueue.push_back(newcomer);
+            std::cout << "  Joined: " << newcomer.name << " (" << newcomer.order << ")\n";
+        } else {
+            std::cout << "  Joined: (no one)\n";
+        }
+    }
+
+    std::cout << "  Queue now: [";
     coffeeQueue.print_queue();
     std::cout << "]\n";
+
+
 
     return 0;
 }
