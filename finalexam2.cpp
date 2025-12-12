@@ -114,7 +114,6 @@ static const std::vector<std::string> NAMES = {
     "Alex", "Sam", "Jordan", "Taylor", "Casey", "Riley", "Morgan",
     "Jamie", "Avery", "Parker", "Quinn", "Robin", "Drew", "Cameron", "Sky"
 };
-
 // Orders specific to each vendor
 static const std::vector<std::string> COFFEE_ORDERS = {
     "Latte", "Espresso", "Cappuccino", "Americano", "Mocha", "Macchiato"
@@ -186,6 +185,9 @@ int main(int argc, char* argv[]) {
     std::vector<Customer> braceletQueue;
     for (int i = 0; i < 3; ++i) braceletQueue.push_back(make_customer_for_vendor(rng, BRACELET_COLORS));
 
+    std::queue<Customer> smoothieQueue;
+    for (int i = 0; i < 3; ++i) smoothieQueue.push(make_customer_for_vendor(rng, SMOOTHIE_FLAVORS));
+
     const int ROUNDS = 10;
 
     //
@@ -218,6 +220,9 @@ int main(int argc, char* argv[]) {
         coffeeQueue.print_queue();
         std::cout << "\n\n";
 
+        //if im not misunderstanding you only like to have using namespace:std so I dont have
+        // to keep writing std::cout but I red that it is not a good practice to use it globally
+        
         // Muffin booth (std::deque)
         std::cout << "Muffin Booth:\n";
         if (!muffinQueue.empty()) {
@@ -236,6 +241,26 @@ int main(int argc, char* argv[]) {
         }
         std::cout << "  Queue now: ";
         print_deque_queue(muffinQueue);
+        std::cout << "\n\n";
+
+        // Bracelet booth (std::vector used as FIFO)
+        std::cout << "Bracelet Booth:\n";
+        if (!braceletQueue.empty()) {
+            Customer served = braceletQueue.front();
+            braceletQueue.erase(braceletQueue.begin());
+            std::cout << "  Served: " << served.name << " (" << served.order << ")\n";
+        } else {
+            std::cout << "  Served: (none, queue empty)\n";
+        }
+        if (coin_flip(rng)) {
+            Customer newcomer = make_customer_for_vendor(rng, BRACELET_COLORS);
+            braceletQueue.push_back(newcomer);
+            std::cout << "  Joined: " << newcomer.name << " (" << newcomer.order << ")\n";
+        } else {
+            std::cout << "  Joined: (no one)\n";
+        }
+        std::cout << "  Queue now: ";
+        print_vector_queue(braceletQueue);
         std::cout << "\n\n";
 
     }    // Final summary: sizes of each queue
