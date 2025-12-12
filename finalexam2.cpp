@@ -263,6 +263,27 @@ int main(int argc, char* argv[]) {
         print_vector_queue(braceletQueue);
         std::cout << "\n\n";
 
+        // Smoothie booth (std::queue)
+        std::cout << "Smoothie Booth:\n";
+        if (!smoothieQueue.empty()) {
+            Customer served = smoothieQueue.front();
+            smoothieQueue.pop();
+            std::cout << "  Served: " << served.name << " (" << served.order << ")\n";
+        } else {
+            std::cout << "  Served: (none, queue empty)\n";
+        }
+        if (coin_flip(rng)) {
+            Customer newcomer = make_customer_for_vendor(rng, SMOOTHIE_FLAVORS);
+            smoothieQueue.push(newcomer);
+            std::cout << "  Joined: " << newcomer.name << " (" << newcomer.order << ")\n";
+        } else {
+            std::cout << "  Joined: (no one)\n";
+        }
+        std::cout << "  Queue now: ";
+        print_std_queue(smoothieQueue);
+        std::cout << "\n\n";
+        
+
     }    // Final summary: sizes of each queue
 
     return 0;
