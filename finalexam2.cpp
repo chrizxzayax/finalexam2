@@ -1,7 +1,6 @@
 // comsc 210 | finalexam2 | Christian Molina
 
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <vector>
 #include <deque>
@@ -9,11 +8,15 @@
 #include <random>
 #include <chrono>
 #include <algorithm>
+#include <cstdint>
+#include <cstdlib>
+
 
 struct Customer {
     std::string name;
     std::string order;
 };
+
 std::mt19937 make_rng(uint32_t seed = 0) {// default seed 0 means use time-based seed
     if (seed == 0) {
         return std::mt19937(static_cast<uint32_t>(
@@ -142,8 +145,35 @@ void print_deque_queue(const std::deque<Customer> &dq) {
     std::cout << "]";
 }
 
-int main() {
+void print_vector_queue(const std::vector<Customer> &v) {
+    std::cout << "[";
+    for (size_t i = 0; i < v.size(); ++i) {
+        if (i) std::cout << " | ";
+        std::cout << v[i].name << "(" << v[i].order << ")";
+    }
+    std::cout << "]";
+}
+
+void print_std_queue(std::queue<Customer> qcopy) {
+    std::cout << "[";
+    bool first = true;
+    while (!qcopy.empty()) {
+        if (!first) std::cout << " | ";
+        Customer c = qcopy.front(); qcopy.pop();
+        std::cout << c.name << "(" << c.order << ")";
+        first = false;
+    }
+    std::cout << "]";
+}
+
+int main(int argc, char* argv[]) {
+
     uint32_t seed = 0;
+    if (argc >= 2) {
+        long s = std::strtol(argv[1], nullptr, 10);
+        if (s != 0) seed = static_cast<uint32_t>(s);
+    }
+
     auto rng = make_rng(seed);
 
     // Initialize booths
@@ -153,7 +183,14 @@ int main() {
     std::deque<Customer> muffinQueue;
     for (int i = 0; i < 3; ++i) muffinQueue.push_back(make_customer_for_vendor(rng, MUFFIN_ORDERS));
 
-     const int ROUNDS = 10;
+    std::vector<Customer> braceletQueue;
+    for (int i = 0; i < 3; ++i) braceletQueue.push_back(make_customer_for_vendor(rng, BRACELET_COLORS));
+
+    const int ROUNDS = 10;
+
+    //
+    //
+    // Simulation loop
 
     std::cout << "Starting simulation for " << ROUNDS << " rounds";
     if (seed != 0) std::cout << " (seed=" << seed << ")";
@@ -202,11 +239,6 @@ int main() {
         std::cout << "\n\n";
 
     }    // Final summary: sizes of each queue
-
-    std::cout << "===== Simulation finished =====\n";
-    std::cout << "Final queue sizes:\n";
-    std::cout << "  Coffee: " << coffeeQueue.size() << "\n";
-    std::cout << "  Muffin: " << muffinQueue.size() << "\n";
 
     return 0;
 }
